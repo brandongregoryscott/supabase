@@ -4,7 +4,7 @@ export const getAnchor = (text: any): string | undefined => {
     if (Array.isArray(text)) {
       const customAnchor = text.find((x) => typeof x === 'string' && hasCustomAnchor(x))
       if (customAnchor !== undefined) {
-        return ''
+        return parseCustomAnchor(customAnchor)
       }
 
       const formattedText = text

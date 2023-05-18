@@ -1,6 +1,8 @@
 name: Docs Tests
 
 on:
+  workflow_dispatch:
+
   push:
     branches: ['*']
     paths:
