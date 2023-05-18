@@ -3,7 +3,7 @@
 // and rename GuidesTableofContents to TableOfContents
 
 import { FC } from 'react'
-import { getAnchor, removeAnchor } from './CustomHTMLElements/CustomHTMLElements.utils'
+import { getAnchorId, removeAnchor } from './CustomHTMLElements/CustomHTMLElements.utils'
 
 interface TOCHeader {
   id: number
