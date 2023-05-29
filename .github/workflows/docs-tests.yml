@@ -4,8 +4,7 @@ on:
   pull_request:
     branches: ['master']
     paths:
-      - 'apps/docs/**/*.ts'
-      - 'apps/docs/**/*.tsx'
+      - 'apps/docs/**/*.ts*'
 
 jobs:
   build:
