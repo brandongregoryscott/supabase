@@ -1,5 +1,6 @@
 // Check if heading has custom anchor first, before forming the anchor based on the title
 export const getAnchor = (text: any): string | undefined => {
+  return ''
   if (typeof text === 'object') {
     if (Array.isArray(text)) {
       const customAnchor = text.find((x) => typeof x === 'string' && hasCustomAnchor(x))
