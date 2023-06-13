@@ -3,8 +3,17 @@ import { FC } from 'react'
 import { isUndefined } from 'lodash'
 import { observer } from 'mobx-react-lite'
 import { useRouter } from 'next/router'
-import { Button, Dropdown, IconHome, IconSettings, IconUser } from 'ui'
-
+import {
+  Button,
+  Dropdown,
+  IconHome,
+  IconSettings,
+  IconUser,
+  IconSearch,
+  useCommandMenu,
+  IconCommand,
+} from 'ui'
+import * as Tooltip from '@radix-ui/react-tooltip'
 import { useFlag, useStore } from 'hooks'
 import { IS_PLATFORM } from 'lib/constants'
 import {
@@ -13,36 +22,41 @@ import {
   generateToolRoutes,
 } from './NavigationBar.utils'
 import NavigationIconButton from './NavigationIconButton'
-import { useParams } from 'hooks/misc/useParams'
+import { useParams } from 'common/hooks'
+import { useTheme } from 'common'
+import { detectOS } from 'lib/helpers'
 
 interface Props {}
 
 const NavigationBar: FC<Props> = ({}) => {
   const router = useRouter()
-  const { ref: projectRef } = useParams()
   const { ui } = useStore()
-  const projectBaseInfo = ui.selectedProjectBaseInfo
+  const { isDarkMode, toggleTheme } = useTheme()
+  const { ref: projectRef } = useParams()
 
+  const projectBaseInfo = ui.selectedProjectBaseInfo
   const ongoingIncident = useFlag('ongoingIncident')
 
   const activeRoute = router.pathname.split('/')[3]
   const toolRoutes = generateToolRoutes(projectRef, projectBaseInfo)
   const productRoutes = generateProductRoutes(projectRef, projectBaseInfo)
   const otherRoutes = generateOtherRoutes(projectRef, projectBaseInfo)
-
+  const showCmdkHelper = useFlag('dashboardCmdk')
+  const os = detectOS()
+  const { setIsOpen } = useCommandMenu()
   return (
     <div
       style={{ height: ongoingIncident ? 'calc(100vh - 44px)' : '100vh' }}
       className={[
         'flex w-14 flex-col justify-between overflow-y-hidden p-2',
-        'border-r bg-sidebar-light dark:border-dark dark:bg-sidebar-dark',
+        'border-r bg-body border-scale-500',
       ].join(' ')}
     >
       <ul className="flex flex-col space-y-2">
         <Link href="/projects">
           <a className="block">
             <img
-              src="/img/supabase-logo.svg"
+              src={`${router.basePath}/img/supabase-logo.svg`}
               alt="Supabase"
               className="mx-auto h-[40px] w-6 cursor-pointer rounded"
             />
@@ -83,7 +97,36 @@ const NavigationBar: FC<Props> = ({}) => {
           />
         ))}
       </ul>
-      <ul className="flex flex-col space-y-2">
+      <ul className="flex flex-col space-y-4 items-center">
+        {IS_PLATFORM && showCmdkHelper && (
+          <Tooltip.Root delayDuration={0}>
+            <Tooltip.Trigger>
+              <Button as="span" type="text" size="tiny" onClick={() => setIsOpen(true)}>
+                <div className="py-1">
+                  <IconSearch size={18} strokeWidth={2} />
+                </div>
+              </Button>
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Content side="right">
+                <Tooltip.Arrow className="radix-tooltip-arrow" />
+                <div
+                  className={[
+                    'rounded  py-1 px-2 leading-none shadow',
+                    'border border-scale-200 flex items-center space-x-1',
+                  ].join(' ')}
+                >
+                  {os === 'macos' ? (
+                    <IconCommand size={11.5} strokeWidth={1.5} className="text-scale-1200" />
+                  ) : (
+                    <p className="text-xs">CTRL</p>
+                  )}
+                  <p className="text-xs">K</p>
+                </div>
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        )}
         <Dropdown
           side="right"
           align="start"
@@ -102,10 +145,11 @@ const NavigationBar: FC<Props> = ({}) => {
               <Dropdown.Label>Theme</Dropdown.Label>
               <Dropdown.RadioGroup
                 key="theme"
-                value={ui.themeOption}
-                onChange={(e: any) => ui.onThemeOptionChange(e)}
+                value={isDarkMode ? 'dark' : 'light'}
+                onChange={(e: any) => toggleTheme(e === 'dark')}
               >
-                <Dropdown.Radio value="system">System default</Dropdown.Radio>
+                {/* [Joshen] Removing system default for now, needs to be supported in useTheme from common packages */}
+                {/* <Dropdown.Radio value="system">System default</Dropdown.Radio> */}
                 <Dropdown.Radio value="dark">Dark</Dropdown.Radio>
                 <Dropdown.Radio value="light">Light</Dropdown.Radio>
               </Dropdown.RadioGroup>

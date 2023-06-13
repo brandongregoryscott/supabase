@@ -23,7 +23,8 @@ import {
 import { PermissionAction } from '@supabase/shared-types/out/constants'
 
 import { uuidv4 } from 'lib/helpers'
-import { useStore, checkPermissions, useParams } from 'hooks'
+import { useStore, checkPermissions } from 'hooks'
+import { useParams } from 'common/hooks'
 import { useJwtSecretUpdatingStatusQuery } from 'data/config/jwt-secret-updating-status-query'
 import { useJwtSecretUpdateMutation } from 'data/config/jwt-secret-update-mutation'
 import { useProjectPostgrestConfigQuery } from 'data/config/project-postgrest-config-query'
@@ -131,7 +132,7 @@ const JWTSettings: FC<Props> = ({}) => {
                 layout="horizontal"
               />
               <div className="space-y-3">
-                <div className="p-3 px-6 border rounded-md shadow-sm bg-bg-alt-light dark:border-dark dark:bg-bg-alt-dark">
+                <div className="p-3 px-6 border rounded-md shadow-sm bg-scale-200 dark:border-dark dark:bg-scale-200">
                   {isUpdatingJwtSecret ? (
                     <div className="flex items-center space-x-2">
                       <IconLoader className="animate-spin" size={14} />
@@ -165,19 +166,21 @@ const JWTSettings: FC<Props> = ({}) => {
                                   Generate a new secret
                                 </Button>
                               </Tooltip.Trigger>
-                              <Tooltip.Content side="bottom">
-                                <Tooltip.Arrow className="radix-tooltip-arrow" />
-                                <div
-                                  className={[
-                                    'rounded bg-scale-100 py-1 px-2 leading-none shadow',
-                                    'border border-scale-200',
-                                  ].join(' ')}
-                                >
-                                  <span className="text-xs text-scale-1200">
-                                    You need additional permissions to generate a new JWT secret
-                                  </span>
-                                </div>
-                              </Tooltip.Content>
+                              <Tooltip.Portal>
+                                <Tooltip.Content side="bottom">
+                                  <Tooltip.Arrow className="radix-tooltip-arrow" />
+                                  <div
+                                    className={[
+                                      'rounded bg-scale-100 py-1 px-2 leading-none shadow',
+                                      'border border-scale-200',
+                                    ].join(' ')}
+                                  >
+                                    <span className="text-xs text-scale-1200">
+                                      You need additional permissions to generate a new JWT secret
+                                    </span>
+                                  </div>
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
                             </Tooltip.Root>
                           ) : (
                             <Dropdown

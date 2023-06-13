@@ -5,7 +5,8 @@ import { observer } from 'mobx-react-lite'
 import { IconCheck, IconClipboard } from 'ui'
 import * as Tooltip from '@radix-ui/react-tooltip'
 
-import { useParams, useStore } from 'hooks'
+import { useStore } from 'hooks'
+import { useParams } from 'common/hooks'
 import Table from 'components/to-be-cleaned/Table'
 import { EdgeFunctionsResponse } from 'data/edge-functions/edge-functions-query'
 
@@ -22,7 +23,7 @@ const EdgeFunctionsListItem: FC<Props> = ({ function: item }) => {
   // get the .co or .net TLD from the restUrl
   const restUrl = ui.selectedProject?.restUrl
   const restUrlTld = new URL(restUrl as string).hostname.split('.').pop()
-  const functionUrl = `https://${ref}.functions.supabase.${restUrlTld}/${item.slug}`
+  const functionUrl = `https://${ref}.supabase.${restUrlTld}/functions/v1/${item.slug}`
 
   return (
     <Table.tr
@@ -78,19 +79,21 @@ const EdgeFunctionsListItem: FC<Props> = ({ function: item }) => {
               <p className="text-sm text-scale-1000">{dayjs(item.updated_at).fromNow()}</p>
             </div>
           </Tooltip.Trigger>
-          <Tooltip.Content side="bottom">
-            <Tooltip.Arrow className="radix-tooltip-arrow" />
-            <div
-              className={[
-                'rounded bg-scale-100 py-1 px-2 leading-none shadow',
-                'border border-scale-200',
-              ].join(' ')}
-            >
-              <span className="text-xs text-scale-1200">
-                Last updated on {dayjs(item.updated_at).format('DD MMM, YYYY HH:mm')}
-              </span>
-            </div>
-          </Tooltip.Content>
+          <Tooltip.Portal>
+            <Tooltip.Content side="bottom">
+              <Tooltip.Arrow className="radix-tooltip-arrow" />
+              <div
+                className={[
+                  'rounded bg-scale-100 py-1 px-2 leading-none shadow',
+                  'border border-scale-200',
+                ].join(' ')}
+              >
+                <span className="text-xs text-scale-1200">
+                  Last updated on {dayjs(item.updated_at).format('DD MMM, YYYY HH:mm')}
+                </span>
+              </div>
+            </Tooltip.Content>
+          </Tooltip.Portal>
         </Tooltip.Root>
       </Table.td>
       <Table.td className="lg:table-cell">

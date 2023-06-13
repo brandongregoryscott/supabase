@@ -4,15 +4,16 @@ import { useRouter } from 'next/router'
 import { PermissionAction } from '@supabase/shared-types/out/constants'
 
 import { NextPageWithLayout } from 'types'
-import { checkPermissions, useFlag, useParams, useStore } from 'hooks'
+import { checkPermissions, useFlag, useStore } from 'hooks'
+import { useParams } from 'common/hooks'
 import { post } from 'lib/common/fetch'
 import { API_URL, PROJECT_STATUS } from 'lib/constants'
 import { useProjectContentStore } from 'stores/projectContentStore'
-import { useProfileQuery } from 'data/profile/profile-query'
 import Loading from 'components/ui/Loading'
 import ProductEmptyState from 'components/to-be-cleaned/ProductEmptyState'
 import { createReport } from 'components/to-be-cleaned/Reports/Reports.utils'
 import { ReportsLayout } from 'components/layouts'
+import { useProfileQuery } from 'data/profile/profile-query'
 
 export const UserReportPage: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(true)

@@ -1,42 +1,15 @@
+import defaultTheme from '../../lib/theme/defaultTheme'
 import useStyles from '../../lib/theme/use-styles'
 
 interface Props {
-  color?:
-    | 'brand'
-    | 'scale'
-    | 'tomato'
-    | 'red'
-    | 'crimson'
-    | 'pink'
-    | 'plum'
-    | 'purple'
-    | 'violet'
-    | 'indigo'
-    | 'blue'
-    | 'cyan'
-    | 'teal'
-    | 'green'
-    | 'grass'
-    | 'brown'
-    | 'orange'
-    | 'sky'
-    | 'mint'
-    | 'lime'
-    | 'yellow'
-    | 'amber'
-    | 'gold'
-    | 'bronze'
-    | 'gray'
-    | 'mauve'
-    | 'slate'
-    | 'sage'
-    | 'olive'
-    | 'sand'
+  color?: BadgeColor
   children: string | React.ReactNode
   size?: 'large' | 'small'
   dot?: boolean
   className?: string
 }
+
+export type BadgeColor = keyof typeof defaultTheme.badge.color
 
 function Badge({ color = 'brand', children, size, dot, className }: Props) {
   const __styles = useStyles('badge')

@@ -4,12 +4,14 @@ import { Button, IconMoon, IconSun, Input, Listbox } from 'ui'
 import { AccountLayout } from 'components/layouts'
 import SchemaFormPanel from 'components/to-be-cleaned/forms/SchemaFormPanel'
 import Panel from 'components/ui/Panel'
-import { Profile as ProfileType, useProfileQuery } from 'data/profile/profile-query'
+import { Profile as ProfileType } from 'data/profile/types'
 import { useProfileUpdateMutation } from 'data/profile/profile-update-mutation'
+import { useProfileQuery } from 'data/profile/profile-query'
 import { useStore } from 'hooks'
 import { useSession } from 'lib/auth'
 import Link from 'next/link'
 import { NextPageWithLayout } from 'types'
+import { useTheme } from 'common'
 
 const User: NextPageWithLayout = () => {
   return (
@@ -21,7 +23,7 @@ const User: NextPageWithLayout = () => {
 
 User.getLayout = (page) => (
   <AccountLayout
-    title="Supabase"
+    title="Preferences"
     breadcrumbs={[
       {
         key: `supabase-settings`,
@@ -142,29 +144,24 @@ const Profile = ({ profile }: { profile?: ProfileType }) => {
 }
 
 const ThemeSettings = observer(() => {
-  const { ui } = useStore()
+  const { isDarkMode, toggleTheme } = useTheme()
 
   return (
     <Panel title={<h5 key="panel-title">Theme</h5>}>
       <Panel.Content>
         <Listbox
-          value={ui.themeOption}
+          value={isDarkMode ? 'dark' : 'light'}
           label="Interface theme"
           descriptionText="Choose a theme preference"
           layout="horizontal"
           style={{ width: '50%' }}
-          icon={
-            ui.themeOption === 'light' ? (
-              <IconSun />
-            ) : ui.themeOption === 'dark' ? (
-              <IconMoon />
-            ) : undefined
-          }
-          onChange={(themeOption: any) => ui.onThemeOptionChange(themeOption)}
+          icon={isDarkMode ? <IconMoon /> : <IconSun />}
+          onChange={(themeOption: any) => toggleTheme(themeOption === 'dark')}
         >
-          <Listbox.Option label="System default" value="system">
+          {/* [Joshen] Removing system default for now, needs to be supported in useTheme from common packages */}
+          {/* <Listbox.Option label="System default" value="system">
             System default
-          </Listbox.Option>
+          </Listbox.Option> */}
           <Listbox.Option label="Dark" value="dark">
             Dark
           </Listbox.Option>

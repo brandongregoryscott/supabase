@@ -196,6 +196,14 @@ const InputField = ({
   }
 
   if (field.format === 'bool') {
+    const options = [
+      { value: 'true', label: 'TRUE' },
+      { value: 'false', label: 'FALSE' },
+      ...(field.isNullable ? [{ value: 'null', label: 'NULL' }] : []),
+    ]
+
+    const defaultValue = field.value === null ? 'null' : field.value
+
     return (
       <Listbox
         size="small"
@@ -204,23 +212,22 @@ const InputField = ({
         label={field.name}
         labelOptional={field.format}
         descriptionText={field.comment}
-        defaultValue={field.value}
+        defaultValue={defaultValue}
         onChange={(value: string) => {
           if (value === 'null') onUpdateField({ [field.name]: null })
           else onUpdateField({ [field.name]: value })
         }}
       >
-        <Listbox.Option id="true" key="true" label="TRUE" value="true">
-          TRUE
-        </Listbox.Option>
-        <Listbox.Option id="false" key="false" label="FALSE" value="false">
-          FALSE
-        </Listbox.Option>
-        {field.isNullable && (
-          <Listbox.Option id="null" key="null" label="NULL" value="null">
-            NULL
+        {options.map((option) => (
+          <Listbox.Option
+            id={option.value}
+            key={option.value}
+            label={option.label}
+            value={option.value}
+          >
+            {option.label}
           </Listbox.Option>
-        )}
+        ))}
       </Listbox>
     )
   }

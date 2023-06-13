@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import { ComponentType, useEffect } from 'react'
 
 import { usePermissionsQuery } from 'data/permissions/permissions-query'
-import { useParams, useStore } from 'hooks'
+import { useStore } from 'hooks'
+import { useParams } from 'common/hooks'
 import { useAuth } from 'lib/auth'
 import { IS_PLATFORM } from 'lib/constants'
 import { getReturnToPath, STORAGE_KEY } from 'lib/gotrue'
@@ -28,6 +29,7 @@ export function withAuth<T>(
 ) {
   const WithAuthHOC: ComponentType<T> = (props: any) => {
     const router = useRouter()
+    const { basePath } = router
     const { ref, slug } = useParams()
     const rootStore = useStore()
     const { isLoading, session } = useAuth()
@@ -47,6 +49,13 @@ export function withAuth<T>(
       enabled: IS_PLATFORM,
       onSuccess(permissions) {
         ui.setPermissions(permissions)
+      },
+      onError(error: any) {
+        ui.setNotification({
+          error,
+          category: 'error',
+          message: `Failed to fetch permissions: ${error.message}. Try refreshing your browser, or reach out to us via a support ticket if the issue persists`,
+        })
       },
     })
 
@@ -87,7 +96,9 @@ export function withAuth<T>(
           {IS_PLATFORM && (
             <script
               dangerouslySetInnerHTML={{
-                __html: `window._getReturnToPath = ${getReturnToPath.toString()};if (!localStorage.getItem('${STORAGE_KEY}') && !location.hash) {const searchParams = new URLSearchParams(location.search);searchParams.set('returnTo', location.pathname);location.replace('/sign-in' + '?' + searchParams.toString())}`,
+                __html: `window._getReturnToPath = ${getReturnToPath.toString()};if (!localStorage.getItem('${STORAGE_KEY}') && !location.hash) {const searchParams = new URLSearchParams(location.search);searchParams.set('returnTo', location.pathname);location.replace('${
+                  basePath ?? ''
+                }/sign-in' + '?' + searchParams.toString())}`,
               }}
             />
           )}
@@ -107,7 +118,7 @@ export function withAuth<T>(
 }
 
 function defaultRedirectTo(ref: string | string[] | undefined) {
-  return IS_PLATFORM ? '/sign-in' : ref !== undefined ? `/project/${ref}` : '/projects'
+  return IS_PLATFORM ? `/sign-in` : ref !== undefined ? `/project/${ref}` : '/projects'
 }
 
 function checkRedirectTo(

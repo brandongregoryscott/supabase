@@ -12,6 +12,7 @@ import {
 } from 'ui'
 import SVG from 'react-inlinesvg'
 import { formatBytes } from 'lib/helpers'
+import { BASE_PATH } from 'lib/constants'
 import { Transition } from '@headlessui/react'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { PermissionAction } from '@supabase/shared-types/out/constants'
@@ -24,7 +25,7 @@ const PreviewFile = ({ mimeType, previewUrl }: { mimeType: string; previewUrl: s
   if (!mimeType || !previewUrl) {
     return (
       <SVG
-        src={'/img/file-filled.svg'}
+        src={`${BASE_PATH}/img/file-filled.svg`}
         preProcessor={(code) =>
           code.replace(/svg/, 'svg class="mx-auto w-32 h-32 text-color-inherit opacity-75"')
         }
@@ -42,7 +43,7 @@ const PreviewFile = ({ mimeType, previewUrl }: { mimeType: string; previewUrl: s
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
         <SVG
-          src={'/img/file-filled.svg'}
+          src={`${BASE_PATH}/img/file-filled.svg`}
           preProcessor={(code) =>
             code.replace(/svg/, 'svg class="mx-auto w-32 h-32 text-color-inherit opacity-75"')
           }
@@ -85,7 +86,7 @@ const PreviewFile = ({ mimeType, previewUrl }: { mimeType: string; previewUrl: s
   }
   return (
     <SVG
-      src={'/img/file-filled.svg'}
+      src={`${BASE_PATH}/img/file-filled.svg`}
       preProcessor={(code) =>
         code.replace(/svg/, 'svg class="mx-auto w-32 h-32 text-color-inherit opacity-75"')
       }
@@ -204,6 +205,7 @@ const PreviewPane = () => {
                   align="center"
                   overlay={[
                     <Dropdown.Item
+                      key="expires-one-week"
                       onClick={async () =>
                         await copyFileURLToClipboard(file, URL_EXPIRY_DURATION.WEEK)
                       }
@@ -211,6 +213,7 @@ const PreviewPane = () => {
                       Expire in 1 week
                     </Dropdown.Item>,
                     <Dropdown.Item
+                      key="expires-one-month"
                       onClick={async () =>
                         await copyFileURLToClipboard(file, URL_EXPIRY_DURATION.MONTH)
                       }
@@ -218,13 +221,17 @@ const PreviewPane = () => {
                       Expire in 1 month
                     </Dropdown.Item>,
                     <Dropdown.Item
+                      key="expires-one-year"
                       onClick={async () =>
                         await copyFileURLToClipboard(file, URL_EXPIRY_DURATION.YEAR)
                       }
                     >
                       Expire in 1 year
                     </Dropdown.Item>,
-                    <Dropdown.Item onClick={() => setSelectedFileCustomExpiry(file)}>
+                    <Dropdown.Item
+                      key="custom-expiry"
+                      onClick={() => setSelectedFileCustomExpiry(file)}
+                    >
                       Custom expiry
                     </Dropdown.Item>,
                   ]}
@@ -254,19 +261,21 @@ const PreviewPane = () => {
                 </Button>
               </Tooltip.Trigger>
               {!canUpdateFiles && (
-                <Tooltip.Content side="bottom">
-                  <Tooltip.Arrow className="radix-tooltip-arrow" />
-                  <div
-                    className={[
-                      'rounded bg-scale-100 py-1 px-2 leading-none shadow',
-                      'border border-scale-200',
-                    ].join(' ')}
-                  >
-                    <span className="text-xs text-scale-1200">
-                      You need additional permissions to delete this file
-                    </span>
-                  </div>
-                </Tooltip.Content>
+                <Tooltip.Portal>
+                  <Tooltip.Content side="bottom">
+                    <Tooltip.Arrow className="radix-tooltip-arrow" />
+                    <div
+                      className={[
+                        'rounded bg-scale-100 py-1 px-2 leading-none shadow',
+                        'border border-scale-200',
+                      ].join(' ')}
+                    >
+                      <span className="text-xs text-scale-1200">
+                        You need additional permissions to delete this file
+                      </span>
+                    </div>
+                  </Tooltip.Content>
+                </Tooltip.Portal>
               )}
             </Tooltip.Root>
           </div>

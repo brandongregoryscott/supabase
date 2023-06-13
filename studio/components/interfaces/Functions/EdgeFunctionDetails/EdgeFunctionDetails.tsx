@@ -17,7 +17,8 @@ import {
   IconExternalLink,
 } from 'ui'
 
-import { useStore, useParams, checkPermissions } from 'hooks'
+import { useStore, checkPermissions } from 'hooks'
+import { useParams } from 'common/hooks'
 import Panel from 'components/ui/Panel'
 import CommandRender from '../CommandRender'
 import { generateCLICommands } from './EdgeFunctionDetails.utils'
@@ -59,13 +60,7 @@ const EdgeFunctionDetails: FC<Props> = () => {
     : '[YOUR ANON KEY]'
 
   const endpoint = apiService?.app_config.endpoint ?? ''
-  const endpointSections = endpoint.split('.')
-  const functionsEndpoint = [
-    ...endpointSections.slice(0, 1),
-    'functions',
-    ...endpointSections.slice(1),
-  ].join('.')
-  const functionUrl = `${apiService?.protocol}://${functionsEndpoint}/${selectedFunction?.slug}`
+  const functionUrl = `${apiService?.protocol}://${endpoint}/functions/v1/${selectedFunction?.slug}`
 
   const { managementCommands, secretCommands, invokeCommands } = generateCLICommands(
     selectedFunction,
@@ -122,6 +117,9 @@ const EdgeFunctionDetails: FC<Props> = () => {
           {({ isSubmitting, handleReset, values, initialValues, resetForm }: any) => {
             const hasChanges = JSON.stringify(values) !== JSON.stringify(initialValues)
 
+            // [Alaister] although this "technically" is breaking the rules of React hooks
+            // it won't error because the hooks are always rendered in the same order
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             useEffect(() => {
               if (selectedFunction !== undefined) {
                 const formValues = {
@@ -131,6 +129,7 @@ const EdgeFunctionDetails: FC<Props> = () => {
                 resetForm({ values: formValues, initialValues: formValues })
               }
             }, [selectedFunction])
+
             return (
               <>
                 <FormPanel
@@ -208,7 +207,7 @@ const EdgeFunctionDetails: FC<Props> = () => {
                         </p>
                         <div className="!mt-4">
                           <Link href="https://supabase.com/docs/guides/functions/import-maps">
-                            <a target="_blank">
+                            <a target="_blank" rel="noreferrer">
                               <Button type="default" icon={<IconExternalLink strokeWidth={1.5} />}>
                                 More about import maps
                               </Button>
@@ -276,19 +275,21 @@ const EdgeFunctionDetails: FC<Props> = () => {
                     </Button>
                   </Tooltip.Trigger>
                   {!canUpdateEdgeFunction && (
-                    <Tooltip.Content side="bottom">
-                      <Tooltip.Arrow className="radix-tooltip-arrow" />
-                      <div
-                        className={[
-                          'rounded bg-scale-100 py-1 px-2 leading-none shadow',
-                          'border border-scale-200',
-                        ].join(' ')}
-                      >
-                        <span className="text-xs text-scale-1200">
-                          You need additional permissions to delete an edge function
-                        </span>
-                      </div>
-                    </Tooltip.Content>
+                    <Tooltip.Portal>
+                      <Tooltip.Content side="bottom">
+                        <Tooltip.Arrow className="radix-tooltip-arrow" />
+                        <div
+                          className={[
+                            'rounded bg-scale-100 py-1 px-2 leading-none shadow',
+                            'border border-scale-200',
+                          ].join(' ')}
+                        >
+                          <span className="text-xs text-scale-1200">
+                            You need additional permissions to delete an edge function
+                          </span>
+                        </div>
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
                   )}
                 </Tooltip.Root>
               </Alert>

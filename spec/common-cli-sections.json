@@ -14,6 +14,7 @@
     "type": "markdown"
   },
   {
+    "type": "category",
     "title": "General",
     "items": [
       {
@@ -55,6 +56,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Testing",
     "items": [
       {
@@ -68,16 +70,29 @@
         "title": "Run tests (pgTAP)",
         "slug": "supabase-test-db",
         "type": "cli-command"
+      },
+      {
+        "id": "supabase-test-new",
+        "title": "Create a new test",
+        "slug": "supabase-test-new",
+        "type": "cli-command"
       }
     ]
   },
   {
+    "type": "category",
     "title": "Generate Types",
     "items": [
       {
         "id": "supabase-gen",
         "title": "Run code generation tools",
         "slug": "supabase-gen",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-gen-keys",
+        "title": "Generate keys (Preview branch)",
+        "slug": "supabase-gen-keys",
         "type": "cli-command"
       },
       {
@@ -95,6 +110,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Database",
     "items": [
       {
@@ -148,6 +164,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Migrations",
     "items": [
       {
@@ -173,10 +190,17 @@
         "title": "Repair migration history table",
         "slug": "supabase-migration-repair",
         "type": "cli-command"
+      },
+      {
+        "id": "supabase-migration-up",
+        "title": "Apply pending migrations locally",
+        "slug": "supabase-migration-up",
+        "type": "cli-command"
       }
     ]
   },
   {
+    "type": "category",
     "title": "Projects",
     "items": [
       {
@@ -200,6 +224,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Organizations",
     "items": [
       {
@@ -217,6 +242,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Edge Functions",
     "items": [
       {
@@ -258,6 +284,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Secrets",
     "items": [
       {
@@ -287,6 +314,55 @@
     ]
   },
   {
+    "type": "category",
+    "title": "Authentication",
+    "items": [
+      {
+        "id": "supabase-sso",
+        "title": "Manage SSO on your project",
+        "slug": "supabase-sso",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-sso-list",
+        "title": "List all identity providers",
+        "slug": "supabase-sso-list",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-sso-show",
+        "title": "Show information for an identity providers",
+        "slug": "supabase-sso-show",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-sso-add",
+        "title": "Add an identity provider",
+        "slug": "supabase-sso-add",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-sso-update",
+        "title": "Update an identity provider",
+        "slug": "supabase-sso-update",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-sso-remove",
+        "title": "Remove an identity provider",
+        "slug": "supabase-sso-remove",
+        "type": "cli-command"
+      },
+      {
+        "id": "supabase-sso-info",
+        "title": "See your project's SSO information",
+        "slug": "supabase-sso-info",
+        "type": "cli-command"
+      }
+    ]
+  },
+  {
+    "type": "category",
     "title": "Custom Domains",
     "items": [
       {
@@ -328,6 +404,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Vanity Subdomains",
     "items": [
       {
@@ -363,6 +440,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Network Bans",
     "items": [
       {
@@ -386,6 +464,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Network Restrictions",
     "items": [
       {
@@ -409,6 +488,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "SSL Enforcement",
     "items": [
       {
@@ -432,6 +512,7 @@
     ]
   },
   {
+    "type": "category",
     "title": "Autocompletion Scripts",
     "items": [
       {

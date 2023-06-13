@@ -17,7 +17,7 @@ import { PermissionAction } from '@supabase/shared-types/out/constants'
 import { checkPermissions, useStore } from 'hooks'
 import { delete_, patch } from 'lib/common/fetch'
 import { getURL } from 'lib/helpers'
-import { API_URL } from 'lib/constants'
+import { API_URL, BASE_PATH } from 'lib/constants'
 import Panel from 'components/ui/Panel'
 import { AddNewPaymentMethodModal } from 'components/interfaces/Billing'
 import NoPermission from 'components/ui/NoPermission'
@@ -28,6 +28,7 @@ interface Props {
   paymentMethods: any[]
   onDefaultMethodUpdated: (updatedCustomer: any) => void
   onPaymentMethodsDeleted: () => void
+  onPaymentMethodAdded: () => void
 }
 
 const PaymentMethods: FC<Props> = ({
@@ -36,6 +37,7 @@ const PaymentMethods: FC<Props> = ({
   paymentMethods,
   onDefaultMethodUpdated,
   onPaymentMethodsDeleted,
+  onPaymentMethodAdded,
 }) => {
   const { ui } = useStore()
   const orgSlug = ui.selectedOrganization?.slug ?? ''
@@ -99,6 +101,11 @@ const PaymentMethods: FC<Props> = ({
     }
   }
 
+  const onLocalPaymentMethodAdded = () => {
+    setShowAddPaymentMethodModal(false)
+    return onPaymentMethodAdded()
+  }
+
   return (
     <>
       <div className="space-y-2">
@@ -158,7 +165,8 @@ const PaymentMethods: FC<Props> = ({
                       <div key={paymentMethod.id} className="flex items-center justify-between">
                         <div className="flex items-center space-x-8">
                           <img
-                            src={`/img/payment-methods/${paymentMethod.card.brand
+                            alt="Credit card brand"
+                            src={`${BASE_PATH}/img/payment-methods/${paymentMethod.card.brand
                               .replace(' ', '-')
                               .toLowerCase()}.png`}
                             width="32"
@@ -187,19 +195,21 @@ const PaymentMethods: FC<Props> = ({
                                 <Tooltip.Trigger>
                                   <Button disabled as="span" type="outline" icon={<IconX />} />
                                 </Tooltip.Trigger>
-                                <Tooltip.Content side="bottom">
-                                  <Tooltip.Arrow className="radix-tooltip-arrow" />
-                                  <div
-                                    className={[
-                                      'rounded bg-scale-100 py-1 px-2 leading-none shadow', // background
-                                      'w-48 border border-scale-200 text-center', //border
-                                    ].join(' ')}
-                                  >
-                                    <span className="text-xs text-scale-1200">
-                                      Your default payment method cannot be deleted
-                                    </span>
-                                  </div>
-                                </Tooltip.Content>
+                                <Tooltip.Portal>
+                                  <Tooltip.Content side="bottom">
+                                    <Tooltip.Arrow className="radix-tooltip-arrow" />
+                                    <div
+                                      className={[
+                                        'rounded bg-scale-100 py-1 px-2 leading-none shadow', // background
+                                        'w-48 border border-scale-200 text-center', //border
+                                      ].join(' ')}
+                                    >
+                                      <span className="text-xs text-scale-1200">
+                                        Your default payment method cannot be deleted
+                                      </span>
+                                    </div>
+                                  </Tooltip.Content>
+                                </Tooltip.Portal>
                               </Tooltip.Root>
                             ) : (
                               <Dropdown
@@ -250,6 +260,7 @@ const PaymentMethods: FC<Props> = ({
         visible={showAddPaymentMethodModal}
         returnUrl={`${getURL()}/org/${orgSlug}/billing`}
         onCancel={() => setShowAddPaymentMethodModal(false)}
+        onConfirm={() => onLocalPaymentMethodAdded()}
       />
 
       <Modal

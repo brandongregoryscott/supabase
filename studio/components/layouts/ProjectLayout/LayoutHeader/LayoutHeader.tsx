@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { observer } from 'mobx-react-lite'
+import { useParams } from 'common'
+import { Badge } from 'ui'
 
 import { IS_PLATFORM, PRICING_TIER_PRODUCT_IDS } from 'lib/constants'
-import { useParams, useStore } from 'hooks'
+import { useFlag, useStore } from 'hooks'
 import BreadcrumbsView from './BreadcrumbsView'
 import OrgDropdown from './OrgDropdown'
 import ProjectDropdown from './ProjectDropdown'
@@ -12,7 +14,6 @@ import NotificationsPopover from './NotificationsPopover'
 import { getResourcesExceededLimits } from 'components/ui/OveragesBanner/OveragesBanner.utils'
 import { useProjectUsageQuery } from 'data/usage/project-usage-query'
 import { useProjectReadOnlyQuery } from 'data/config/project-read-only-query'
-import { Badge } from 'ui'
 import { useProjectContext } from 'components/layouts/ProjectLayout/ProjectContext'
 
 const LayoutHeader = ({ customHeaderComponents, breadcrumbs = [], headerBorder = true }: any) => {
@@ -21,7 +22,6 @@ const LayoutHeader = ({ customHeaderComponents, breadcrumbs = [], headerBorder =
 
   const { ref: projectRef } = useParams()
   const { project } = useProjectContext()
-
   const { data: isReadOnlyMode } = useProjectReadOnlyQuery({
     projectRef: project?.ref,
     connectionString: project?.connectionString,
@@ -36,6 +36,7 @@ const LayoutHeader = ({ customHeaderComponents, breadcrumbs = [], headerBorder =
     ui.selectedProject?.subscription_tier === PRICING_TIER_PRODUCT_IDS.TEAM
 
   const showOverUsageBadge =
+    useFlag('overusageBadge') &&
     selectedProject?.subscription_tier !== undefined &&
     !projectHasNoLimits &&
     resourcesExceededLimits.length > 0
@@ -43,12 +44,12 @@ const LayoutHeader = ({ customHeaderComponents, breadcrumbs = [], headerBorder =
   return (
     <div
       className={`flex h-12 max-h-12 items-center justify-between py-2 px-5 ${
-        headerBorder ? 'border-b dark:border-dark' : ''
+        headerBorder ? 'border-b border-scale-500' : ''
       }`}
     >
       <div className="-ml-2 flex items-center text-sm">
         {/* Organization is selected */}
-        {selectedOrganization ? (
+        {projectRef && selectedOrganization ? (
           <>
             {/* Org Dropdown */}
             <OrgDropdown />
@@ -86,16 +87,15 @@ const LayoutHeader = ({ customHeaderComponents, breadcrumbs = [], headerBorder =
                   </div>
                 )}
 
-                {/* [Joshen TODO] Temporarily hidden until usage endpoint is sorted out */}
-                {/* {showOverUsageBadge && (
+                {showOverUsageBadge && (
                   <div className="ml-2">
-                    <Link href={`/project/${projectRef}/settings/billing/subscription`}>
+                    <Link href={`/project/${projectRef}/settings/billing/usage`}>
                       <a>
-                        <Badge color="red">Project has exceeded usage limits </Badge>
+                        <Badge color="red">Exceeding usage limits</Badge>
                       </a>
                     </Link>
                   </div>
-                )} */}
+                )}
               </>
             )}
           </>
