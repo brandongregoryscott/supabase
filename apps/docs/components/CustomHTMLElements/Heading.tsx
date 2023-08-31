@@ -42,6 +42,8 @@ const Heading: React.FC<Props> = ({ tag, customAnchor, children }) => {
     },
   })
 
+  return null
+
   return (
     <HeadingTag id={anchor} ref={ref} className="group scroll-mt-24">
       {removeAnchor(children)}
